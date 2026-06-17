@@ -2,6 +2,7 @@
 #### I will be using Synthea data to predict maternal mortality from a number of different factors. This README file will be updated as I make progress.
 #### So far I have only started simulating data and converting csv files to a SQL database.
 #### The processing of the database files could be completed entirely within pandas, but I wanted to simulate a traditional database extraction in order to present an example pipeline.
+#### The measurement observation features are largely sparse, next steps will be assessing what features can be used
 
 ### Here is how I generated data from Synthea
 ``` bash
