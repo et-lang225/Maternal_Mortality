@@ -2,16 +2,18 @@
 #### I will be using Synthea data to predict maternal mortality from a number of different factors. This README file will be updated as I make progress.
 #### So far I have only started simulating data and converting csv files to a SQL database.
 #### The processing of the database files could be completed entirely within pandas, but I wanted to simulate a traditional database extraction in order to present an example pipeline.
-#### So far have code to run a Naive Bayes classifier, a Logisitic Regression Cross Validation (for EN regularization hyperparameters), A Gaussian SVM classifer, a cross-validation loop for a Random Forest classifier, and the bones of a PyTorch Neural Network classifier
-#### Need to include a cross validation loop for the NN model and include a gradient boosting classifier
+#### I am working on getting enough data (1million records) to split data into a train and test set
+#### I queried 1,000 total patients first but that only yeilded about 200 pregnant women and 5 maternal mortality cases. I will have to be vigilant about model evaluation metrics to be sure that True Positives are being classified correctly (possibly focusing on Precision and Recall). 
+#### So far have code to run a Naive Bayes classifier, a Logisitic Regression Cross Validation (for EN regularization hyperparameters), A Gaussian SVM classifer, a cross-validation loop for a Random Forest classifier, a cross-validation loop for a gradient boosting classifier, and the bones of a PyTorch Neural Network classifier
+#### Need to include a cross validation loop for the NN model 
 
 ### Here is how I generated data from Synthea
+### First, go to ./src/main/resources/synthea.properties and make sure exporter.csv.export = true.
 ``` bash
 git clone https://github.com/synthetichealth/synthea.git         
 cd synthea         
 .\gradlew.bat build check test        
-exporter.csv.export = true        
-.\run_synthea -p 1000 -g F "Louisiana"
+.\run_synthea -p 1000000 -g F "Louisiana"
 ```         
 
 Note: Might have to install the most recent version of java in order to run synthea. I had to install a local java folder and inform the powershell to run java from that folder.
