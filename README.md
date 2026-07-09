@@ -2,8 +2,8 @@
 #### I will be using Synthea data to predict maternal mortality from a number of different factors. This README file will be updated as I make progress.
 #### The processing of the database files could be completed entirely within pandas, but I wanted to simulate a traditional database extraction in order to present an example pipeline.
 #### The most feasible way to do this right now with the processing power available to me is to query 100K patients from Synthea
-#### So far have code to run a Naive Bayes classifier, a Logisitic Regression Cross Validation (for EN regularization hyperparameters), A Gaussian SVM classifer, a cross-validation loop for a Random Forest classifier, a cross-validation loop for a gradient boosting classifier, and the bones of a PyTorch Neural Network classifier
-#### Need to include a cross validation loop for the NN model 
+#### So far have code to run a Naive Bayes classifier, a Logisitic Regression Cross Validation (for EN regularization hyperparameters), A Gaussian SVM classifer, a cross-validation loop for a Random Forest classifier, a cross-validation loop for a gradient boosting classifier, and a CV loop for a PyTorch Neural Network classifier
+#### I will compare the final model runs with area under a precision recall curve (true positives will be the hardest to come by) and generate graphics of model results
 
 ### Here is how I generated data from Synthea
 ### First, go to ./src/main/resources/synthea.properties and make sure exporter.csv.export = true.

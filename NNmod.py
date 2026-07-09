@@ -25,7 +25,7 @@ class MomMortMod(nn.Module):
         return self.sigmoid(x)
 
 class NN_mod:
-    def __init__(self, input_size, hidden_layers, epochs=100, lr=0.01):
+    def __init__(self, input_size, hidden_layers, epochs=100, lr=0.001):
         self.input_size = input_size
         self.hidden_layers = hidden_layers
         self.lr = lr                                
@@ -37,11 +37,9 @@ class NN_mod:
 
     def fit(self, X_train, y_train, X_valid, y_valid):
         X_train = torch.from_numpy(X_train).float()
-        y_train = torch.from_numpy(y_train).float().unsqueeze(1)
+        y_train = torch.from_numpy(y_train).float().view(-1, 1)
         X_valid = torch.from_numpy(X_valid).float()
-        y_valid = torch.from_numpy(y_valid).float().unsqueeze(1)
-        train_log = []
-        valid_log = []
+        y_valid = torch.from_numpy(y_valid).float().view(-1, 1)
         for epoch in range(self.epochs):
             self.model.train()
             self.optimizer.zero_grad()
@@ -55,37 +53,30 @@ class NN_mod:
                 pred_valid = self.model(X_valid)
                 valid_loss = self.criterion(pred_valid, y_valid)
             
-            if (epoch+1) % 25 == 0:
-                print(f"  Epoch: {epoch + 1:3d} | Train Loss: {loss.item():.4f} | Valid Loss: {valid_loss.item():.4f}")
-            train_log.append(loss.item())
-            valid_log.append(valid_loss.item())
-        return train_log, valid_log
+            # if (epoch+1) % 25 == 0:
+            #     print(f"  Epoch: {epoch + 1:3d} | Train Loss: {loss.item():.4f} | Valid Loss: {valid_loss.item():.4f}")
+        return loss.item(), valid_loss.item()
     
-    def NN_CV(X, y, k=5,):
+    def NN_CV(self, attributes, response, k=5):
         kf = KFold(n_splits=k, shuffle=True, random_state=42)
-        fold_results = []
+        train_log = []
+        valid_log = []
         
-        for fold, (train_ids, val_ids) in enumerate(kf.split(x)):
+        for fold, (train_ids, val_ids) in enumerate(kf.split(attributes)):
             print(f"Fold: {fold+1} of {k}")
             
             self.model = MomMortMod(self.input_size, self.hidden_layers)
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
             
-            X_train = X[train_ids,:]
-            X_val = X[val_ids,:]
-            y_train = y[train_ids,:]
-            y_val = y[val_ids,:]
+            X_train = attributes[train_ids,:]
+            X_val = attributes[val_ids,:]
+            y_train = response[train_ids]
+            y_val = response[val_ids]
             
-            t_log, v_log =  self.fit(X_train, y_train, X_val, y_val)
+            train_loss, valid_loss =  self.fit(X_train, y_train, X_val, y_val)
+            train_log.append(train_loss)
+            valid_log.append(valid_loss)
             
-            self.model.eval()
-            with torch.no_grad():
-                val_tensor = torch.from_numpy(X_val).float()
-                predictions = self.model(val_tensor)
-                avg_precision = average_precision_score(y_val, predictions)
-                print(f"Fold {fold + 1} Final Mean Precision: {avg_precision:.2f}%")
-                fold_results.append(avg_precision)
-        print(f"\n=== CV Average Accuracy: {np.mean(fold_results):.2f}% ===")
-        return fold_results
+        return np.mean(train_log), np.mean(valid_log)
             
             
