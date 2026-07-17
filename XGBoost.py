@@ -16,7 +16,6 @@ class XGBclass:
             'colsample_bytree': hp.uniform("colsample_bytree", 0.5,1),
             'colsample_bynode': hp.uniform("colsample_bynode", 0.5,1), 
             'colsample_bylevel': hp.uniform("colsample_bylevel", 0.5,1),
-            'n_estimators': hp.choice("n_estimators", np.arange(100,1000,10,dtype='int')),
             'min_child_weight' : hp.choice("min_child_weight", np.arange(1,10,1,dtype='int')),
             'max_delta_step' : hp.choice("max_delta_step", np.arange(1,10,1,dtype='int')),
             'subsample' : hp.uniform("subsample",0.5,1),

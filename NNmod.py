@@ -24,7 +24,7 @@ class MomMortMod(nn.Module):
         x = self.output_layer(x)
         return self.sigmoid(x)
 
-class NN_mod:
+class NN_CVmod:
     def __init__(self, input_size, hidden_layers, epochs=100, lr=0.001):
         self.input_size = input_size
         self.hidden_layers = hidden_layers
@@ -78,5 +78,41 @@ class NN_mod:
             valid_log.append(valid_loss)
             
         return np.mean(train_log), np.mean(valid_log)
+
+class NN_PredMod:
+    def __init__(self, input_size, hidden_layers, epochs=100, lr=0.001):
+        self.input_size = input_size
+        self.hidden_layers = hidden_layers
+        self.lr = lr                                
+        self.epochs = epochs
+        
+        self.criterion = nn.BCELoss()
+        self.model = None
+        self.optimizer = None
+
+    def fit(self, X_train, y_train):
+        X_train = torch.from_numpy(X_train).float()
+        y_train = torch.from_numpy(y_train).float().view(-1, 1)
+        
+        self.model = MomMortMod(self.input_size, self.hidden_layers)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
+        
+        for epoch in range(self.epochs):
+            self.model.train()
+            self.optimizer.zero_grad()
+            pred_train = self.model(X_train)
+            loss = self.criterion(pred_train, y_train)
+            loss.backward()
+            self.optimizer.step()
+            
+            # if (epoch+1) % 25 == 0:
+            #     print(f"Epoch: {epoch + 1:3d} | Train Loss: {loss.item():.4f}")
+    
+    def predict(self, X_test):
+        X_test = torch.from_numpy(X_test).float()
+        self.model.eval()
+        with torch.no_grad():
+            pred_test = self.model(X_test)
+        return pred_test.numpy().flatten()
             
             
