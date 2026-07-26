@@ -30,11 +30,11 @@ class XGBclass:
                         nfold=k, 
                         stratified=True,  
                         early_stopping_rounds=30,
-                        metrics = ['logloss'])
+                        metrics = ['aucpr'])
         
-        best_score = results['test-logloss-mean'].min()
-        return {'loss':best_score, 'status': STATUS_OK}
-    def xgb_Kfold(self, k=5, max_evals=500):
+        best_score = results['test-aucpr-mean'].max()
+        return {'loss': -best_score, 'status': STATUS_OK}
+    def xgb_Kfold(self, k=5, max_evals=10):
         trials = Trials()
         best_hyperparams = fmin(fn=lambda params: self.xgb_obj(params, k=k), space=self.space, algo=tpe.suggest, max_evals=max_evals, trials=trials, early_stop_fn=no_progress_loss(30))
         best_params = space_eval(self.space, best_hyperparams)
